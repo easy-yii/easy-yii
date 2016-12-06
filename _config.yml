@@ -68,7 +68,9 @@ theme: Daily
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
-  type:
+  type: git
+  repo: https://github.com/easy-yii/easy-yii.github.io.git
+  branch: master
 
 favicon: https://static.hinpc.com/image/2016/20160807-hi-logo.png
 logo: https://avatars3.githubusercontent.com/u/23000895?v=3&s=200
