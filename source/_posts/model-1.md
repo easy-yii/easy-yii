@@ -1,9 +1,8 @@
 ---
-title: model
-date: 2016-12-06 10:23:04
+title: model-1(curd)
+date: 2016-12-06 10:55:52
 tags:
------
-
+---
 ## 前言
 
 MVC设计模式是一个经典的设计模式。大多数框架都已mvc为基本架构。Model主要负责处理数据，可以理解为与数据库打交道。
@@ -78,7 +77,7 @@ yii有很多类型的model，我们简单的了解下。
 
 `bankend`和`frontend`都可以继承`common\models\Post.php`，并把公共部分代码放置于这个文件。具体代码如下:
 
-```
+```php
 <?php
 
 namespace common\models;
@@ -108,7 +107,7 @@ class Post extends ActiveRecord
 
 `backend\models\Post`继承`common\models\Post`
 
-```
+```php
 <?php
 namespace backend\models;
 
@@ -137,10 +136,10 @@ class Post extends BasePost
 	 */
 	public function postCreate()
 	{
-		/*$post = new self();
-		$post->author_id = $post['author_id'];
-		$post->title = $post['title'];
-		$post->body = $post['body'];*/
+		//$post = new self();
+		//$post->author_id = $post['author_id'];
+		//$post->title = $post['title'];
+		//$post->body = $post['body'];
 		return $this->save();
 	}
 
@@ -195,7 +194,7 @@ class Post extends BasePost
 ```
 ### steps three 建立controller
 
-```
+```php
 <?php
 /**
  * Created by PhpStorm.
@@ -248,17 +247,106 @@ class PostController extends Controller
 
 ### steps four 调试
 
-推荐postman调试接口
+调试工具推荐:Postman
+
+测试之前，我们美化一下url，在`common\config\main.php`中，加入下面一段代码
+```
+ 'components' => [
+	    'urlManager' => [
+		    'enablePrettyUrl' => true,
+		    'showScriptName' => false,
+		    'suffix'=>'.html',
+		    'rules' => [
+			    'static/download/<type>/<filename>' => 'static/download'
+		    ],
+	    ],
+    ],
+```
+
+测试路由示例：
++ 路由：`yii-blog.backend.com/post/create.html`；方法`post`;传入参数：`author_id`,`title`,`body`;返回：`true`或者`false`;
++ 路由：`yii-blog.backend.com/post/index.html`；方法`get`;传入参数：;返回：一个数组;
+
+### steps five 练习
+
+大家可依照post，完成comment和user相关代码。
 
 ## Two: List
 
 ###  关联表
 
+```php
+//一对多关联
+class Customer extends \yii\db\ActiveRecord
+{
+    public function getOrders()
+    {
+        // 客户和订单通过 Order.customer_id -> id 关联建立一对多关系
+        return $this->hasMany(Order::className(), ['customer_id' => 'id']);
+    }
+}
+
+// 一对一关联
+class Order extends \yii\db\ActiveRecord
+{
+    // 订单和客户通过 Customer.id -> customer_id 关联建立一对一关系
+    public function getCustomer()
+    {
+        return $this->hasOne(Customer::className(), ['id' => 'customer_id']);
+    }
+}
+
+//中间表关联 如果 order 表和 item 表通过中间表 order_item 关联起来
+class Order extends \yii\db\ActiveRecord
+{
+    public function getItems()
+    {
+        return $this->hasMany(Item::className(), ['id' => 'item_id'])
+            ->viaTable('order_item', ['order_id' => 'id']);
+    }
+}
+
+或
+
+class Order extends \yii\db\ActiveRecord
+{
+    public function getOrderItems()
+    {
+        return $this->hasMany(OrderItem::className(), ['order_id' => 'id']);
+    }
+
+    public function getItems()
+    {
+        return $this->hasMany(Item::className(), ['id' => 'item_id'])
+            ->via('orderItems');
+    }
+}
+
+```
+
+
 ### create
+```php 
+$post = new Post();
+$post->title = 'title one';
+$post->body = 'body';
+$post->save(); 
+```
 
 ### update
 
+```php 
+$post = Post::findOne($id);
+$post->title = 'title change';
+$post->save(); //或$post->update();
+```
+
 ### delete
+
+```
+$post = Post::findOne($id);
+$post->delete();
+```
 
 ### find
 
@@ -275,9 +363,9 @@ class PostController extends Controller
     
 #### select
 
-+ 返回所有纪录，但只返回id、author_id、title、bod字段：`$post = Post::find()->select(['id','author_id', 'title', 'body'])->all();`
-+ 指定别名:
-+ addSelect:
++ 返回所有纪录，但只返回id、author_id、title、bod字段：`$post = Post::find()->select(['id','author_id', 'title', 'body'])->asArray()->all();`
++ 指定别名: id指定别名post_id,`$post = Post::find()->select(['id AS post_id','author_id', 'title', 'body'])->asArray()->all();`
++ addSelect: 用法同`select`
 
 #### asArray
 以数组形式返回：
@@ -298,34 +386,34 @@ class PostController extends Controller
 + 操作符格式，例如：['like', 'name', 'test']，如下：
 
 **and**
-```
+```php
 $post = Post::find()->select(['id','author_id', 'title', 'body'])
 			->where(['and', 'author_id=1', ['or', "title='title1'", "title='title3'"]])
 			->asArray()->all();
 ```
 **or**
-```
+```php
 $post = Post::find()->select(['id','author_id', 'title', 'body'])
 			->where(['or', "title='title1'", "title='title3'"])
 			->asArray()->all();
 ```
 
 **between**
-```
+```php
 $post = Post::find()->select(['id','author_id', 'title', 'body'])
 			->where(['between','author_id',1,8])
 			->asArray()->all();
 ```
 
 **not between**
-```
+```php
 $post = Post::find()->select(['id','author_id', 'title', 'body'])
 			->where(['not between','author_id',1,8])
 			->asArray()->all();
 ```
 
 **in**
-```
+```php
 $post = Post::find()->select(['id','author_id', 'title', 'body'])
 			->where(['in','id',[1,2,3]])
 			->asArray()->all();
@@ -335,14 +423,14 @@ $post = Post::find()->select(['id','author_id', 'title', 'body'])
 			->asArray()->all();
 ```
 **not in**
-````
+````php
 $post = Post::find()->select(['id','author_id', 'title', 'body'])
 			->where(['not in','id',[1,2,3,4,5,6,7,8]])
 			->asArray()->all();
 ````
 
 **like**:模糊查询
-```
+```php
 //返回字段body中有`body`和`update`的所有纪录
 $post = Post::find()->select(['id','author_id', 'title', 'body'])
 			->where(['like','body',['body','update']])
@@ -356,28 +444,28 @@ $post = Post::find()->select(['id','author_id', 'title', 'body'])
 			->asArray()->all();
 ```
 **or like**
-```
+```php
 //返回字段title有`1`或`2`的所有纪录
 $post = Post::find()->select(['id','author_id', 'title', 'body'])
 			->where(['or like','title',['1','3']])
 			->asArray()->all();
 ```
 **not like**
-```
+```php
 //不要返回字段title有`1`或`2`的所有纪录
 $post = Post::find()->select(['id','author_id', 'title', 'body'])
 			->where(['not like','title',['1','2']])
 			->asArray()->all();
 ```
 **or not like**
-```
+```php
 //不要返回字段title中有9和title的所有纪录
 $post = Post::find()->select(['id','author_id', 'title', 'body'])
 			->where(['or not like','title',['9','title']])
 			->asArray()->all();
 ```
 **>,>=,<,<=**
-```
+```php
 //author_id小于3的所有纪录
 $post = Post::find()->select(['id','author_id', 'title', 'body'])
 			->where(['<','author_id',3])
@@ -391,7 +479,7 @@ $post = Post::find()->select(['id','author_id', 'title', 'body'])
 
 **exists**
 
-```
+```php
 //如果存在author_id 为2的数据，返回所有的纪录
 $query = Post::find()->where(['author_id'=>2]);
 $post = Post::find()->select(['id','author_id', 'title', 'body'])
@@ -401,7 +489,7 @@ $post = Post::find()->select(['id','author_id', 'title', 'body'])
 
 **not exists**
 
-```
+```php
 //如果不存在author_id 为2的数据，返回所有的纪录
 $query = Post::find()->where(['author_id'=>2]);
 $post = Post::find()->select(['id','author_id', 'title', 'body'])
@@ -412,13 +500,23 @@ $post = Post::find()->select(['id','author_id', 'title', 'body'])
 
 #### orderBy:排序
 
-`$post = Post::find()->orderBy(['id' => SORT_ASC, 'author_id' => SORT_DESC,])->all();`
-`$post = Post::find()->orderBy('id ASC, author_id DESC')->all();`
-`$post = Post::find()->orderBy('id ASC')->addOrderBy('author_id DESC')->all();`
+```php
+$post = Post::find()
+->orderBy(['id' => SORT_ASC, 'author_id' => SORT_DESC,])
+->all();
 
+$post = Post::find()
+->orderBy('id ASC, author_id DESC')
+->all();
+
+$post = Post::find()
+->orderBy('id ASC')
+->addOrderBy('author_id DESC')
+->all();
+```
 #### having
 
-```
+```php
 //查找body字段中有update的纪录，并计算所有该作者的文章总和
 $post = Post::find()
 		    ->select(['COUNT(*) AS count','author_id','body'])
@@ -429,7 +527,7 @@ $post = Post::find()
 ```
 #### groupBy
 
-```
+```php
 //按照author_id分组并计算每组总和,只打印计数总和、author_id
 $post = Post::find()
 		    ->select(['COUNT(*) AS count','author_id'])
@@ -438,9 +536,7 @@ $post = Post::find()
 			->all();					
 
 ```
-
-Question:
-`$post = Post::find()->groupBy('author_id')->asArray()->all();`，打印结果没有分组效果？？？？？？
+`$post = Post::find()->groupBy('author_id')->asArray()->all();`
 
 
 判断id为2的纪录是否存在，存在返回true，不存在返回false：
@@ -460,7 +556,7 @@ addXXX()，这种写法，一般作为条件补充。用法不多说，同上。
 
 过滤用户输入的空值,比如用户登陆时输入的用户名或者email，如果值为空，则默认不作为查询条件。
 
-```
+```php
 User::find()->filterWhere([
     'username' => $username,
     'email' => $email,		
@@ -471,7 +567,7 @@ User::find()->filterWhere([
 
 为特定列添加过滤条件，并允许用户选择过滤器运算符.如`<`,`>`,`>=`,`<=`,`<>`,`=`
 
-```
+```php
 $post = Post::find()
 	->andFilterCompare('author_id','4','<')
 	->asArray()
@@ -484,7 +580,7 @@ limit 限制返回的条数，可以用空值或者负值禁用。
 
 offset 比如返回10条数据，偏移量为3，则会返回后面7条数据.
 
-```
+```php
 $post = Post::find()
     ->select(['id','author_id','body'])
 	->andFilterCompare('author_id','4','<')
@@ -498,7 +594,7 @@ $post = Post::find()
 
 **join()**
 
-```
+```php
 //第一个参数，可为'left join' ,'right join','inner join'
 $post = (new Query())->from('post')
     ->join('right join','user','user.id = post.author_id ')
@@ -511,7 +607,7 @@ $post = (new Query())->from('post')
 
 **leftJoin()**
 
-```
+```php
 $post = (new Query())->from('post')
 	->innerJoin('user','user.id = post.author_id ')
 	->all();
@@ -519,7 +615,7 @@ $post = (new Query())->from('post')
 
 `post` 为左表，`user`为右表。会以左表为中心，即`post`，会全部加载左表的内容，如果右表没有匹配项，则右表相应字段值显示为null。
 
-```
+```php
 $post = (new Query())->from('post')
 	->leftJoin('user','user.id = post.author_id ')
 	->all();
@@ -529,7 +625,7 @@ $post = (new Query())->from('post')
 
 `post` 为左表，`user`为右表。会以右表为中心，即`user`，会全部加载右表的内容，如果左表没有匹配项，则左表相应字段值显示为null。
 
-```
+```php
 $post = (new Query())->from('post')
 	->rightJoin('user','user.id = post.author_id ')
 	->all();
@@ -539,7 +635,7 @@ $post = (new Query())->from('post')
 
 UNION 常用于**数据类似**的两张或多张表查询，如不同的数据分类表，或者是数据历史表等。
 
-```
+```php
 $query_one = (new Query())->from('post')
     ->andFilterCompare('author_id','4','<=');
 
@@ -554,7 +650,7 @@ var_dump($query_two->union($query_one)->all());
 
 ` yii\db\Query::all() `会把所有数据全部读出来，放到内存中。所以需要处理大数据时，不太适合。为了保持较低的内存占有，使用`batch`和`each`。
 
-```
+```php
 //each
 $post = Post::find();
 foreach($post->each() as $key=>$value) {
@@ -571,15 +667,16 @@ foreach($post->batch() as $posts) {
 }
 ```
 
-
-## Source Code Analysis 源码分析
-
-### load()
-
-
 > 后记，
-下一章内容：
+后续内容：
 >
++ load()
 + rules
 + scenario
 + validate
+
+
+如有问题可通过以下方式联系我：
++ 可直接留言，我每天都会看的
++ [点击此处创建issue](https://github.com/easy-yii/easy-yii.github.io/issues)
++ 也可邮箱联系我，yuanliandu@qq.com

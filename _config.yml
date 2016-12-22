@@ -89,3 +89,26 @@ social:
 widget:
   title: 关于本站
   content: <p align="left">一步一个脚印，细致地学习Yii2，从实践到阅读源码。</p>
+
+markdown:
+  render:
+    html: true
+    xhtmlOut: false
+    breaks: false
+    linkify: true
+    typographer: true
+    quotes: '“”‘’'
+  plugins:
+    - markdown-it-footnote
+    - markdown-it-sup
+    - markdown-it-sub
+    - markdown-it-abbr
+    - markdown-it-emoji
+  anchors:
+    level: 2
+    collisionSuffix: 'v'
+    permalink: true
+    permalinkClass: header-anchor
+    permalinkSymbol: ¶
+
+duoshuo_shortname: easy-yii

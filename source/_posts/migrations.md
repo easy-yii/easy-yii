@@ -14,7 +14,7 @@ tags:
 
 本文采用的是yii2-advanced版本，在common/config/main-local.php文件配置。
 
-```
+```php
 <?php
 return [
     'components' => [
@@ -35,7 +35,7 @@ return [
 
 执行 `php yii migrate/create post` 后，终端会输出一则消息询问你，是否创建该文件，输入 `yes` 即可。如下：
 
-```
+```php
 Yii Migration Tool (based on Yii v2.0.9)
 Create new migration '/Users/yuan/PhpstormProjects/chg/console/migrations/m161023_120328_post.php'? (yes|no) [no]:yes
 New migration created successfully.
@@ -46,7 +46,7 @@ New migration created successfully.
 
 2.06以后的版本，提供了更简便创建列的方法。我们将各种类型的列试一下。详细可参照[yii\db\SchemaBuilderTrait](http://www.yiiframework.com/doc-2.0/yii-db-schemabuildertrait.html)
 
-```
+```php
 public function up()
     {
 	    $this->createTable('posts',[
@@ -90,7 +90,7 @@ public function up()
 
 在文件中添加代码：
 
-```
+```php
 public function up()
     {
 	    $this->addColumn('posts', 'author_id', $this->integer());
@@ -182,7 +182,7 @@ string (默认值为 db)，指定数据库 application component 的 ID。 它�
 如果很多迁移文件，到要迁移到id为db2的数据库中，可以将`init()`部分代码封装成一个基类，让要迁移到id为db2的数据库的迁移
 文件继承这个基类就可以了。
 
-```
+```php
 <?php
 
 use yii\db\Migration;
@@ -208,7 +208,7 @@ class m150101_185401_create_news_table extends Migration
 模版生成器，默认值是下面数组。数组中的健即是，上一小结的别名。以下文件位置都在`vendor/yiisoft/yii2/views/`目录下。
 如何创建一个新的模版，可能要修改框架源码。有兴趣的可详细研究`yii\console\controllers\MigrateController`源码。
 
-```
+```php
 array(
  'create_table' => '@yii/views/createTableMigration.php',
   'drop_table' => '@yii/views/dropTableMigration.php',
@@ -286,7 +286,7 @@ array(
 
 部分示例：
 
-```
+```php
 $this->execute("insert into news (title,content) VALUES ('insert','insert');"); //暂时不清楚，$params到底要传什么？
 
 $this->insert('news', ['title' => 'test 1','content' => 'content 1']);
@@ -342,6 +342,12 @@ Question One：在个人看来，使用Migration将数据库也纳入版本管�
 
 >后记，migration只是帮助我们更好的管理数据库。它的核心还是如何设计数据库，建议刚开始学习PHP的童鞋们，补充一下关于数据库的知识。如，
 基本的sql语法、表之间的关联关系、事务、悲观锁、数据库引擎等。
+
+
+如有问题可通过以下方式联系我：
++ 可直接留言，我每天都会看的
++ [点击此处创建issue](https://github.com/easy-yii/easy-yii.github.io/issues)
++ 也可邮箱联系我，yuanliandu@qq.com
 
 
 ## 延伸:
