@@ -85,3 +85,10 @@ Yii2将路径别名的使用扩展到了文件目录路径和URL。一个别名�
 ## 总结(Conclusion)
 这些都是Yii2.0框架最基本的知识，为将框架设计中的最新和最前沿概念带入Yii平台奠定了基础。在下一篇文章中，
 我将详细讨论MVC概念，以及它们在这个流行框架的新版本中如何改变。
+
+快速导航，其他文章链接：
+
++ [part2](https://easy-yii.github.io/2017/01/04/know-PartTwo/)
++ [part3](https://easy-yii.github.io/2017/01/05/know-PartThree/)
++ [part4](https://easy-yii.github.io/2017/01/05/know-PartFour/)
++ [part5](https://easy-yii.github.io/2017/01/09/know-PartFive/)

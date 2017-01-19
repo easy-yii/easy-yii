@@ -127,3 +127,9 @@ class SiteController extends Controller
 可以看出，Yii2的MVC组件的几乎所有变化都是更好的，我们相信它们将为开发人员提供增强的体验。
 在下一部分中，我们旨在深入了解框架的`ActiveRecord`和`DB`处理部分，因为它经历了大量的更改，因此需要一个完整的篇幅来涵盖所有的内容。
 
+快速导航，其他文章链接：
+
++ [part1](https://easy-yii.github.io/2017/01/04/know-PartOne/)
++ [part3](https://easy-yii.github.io/2017/01/05/know-PartThree/)
++ [part4](https://easy-yii.github.io/2017/01/05/know-PartFour/)
++ [part5](https://easy-yii.github.io/2017/01/09/know-PartFive/)

@@ -123,3 +123,11 @@ foreach (Post::find()->with('comments')->each() as $post) {
 
 这绝不是Yii2在`ActiveRecord`所做改进和进步的详细列表。我们发现有些改变，相当的灵活和直接。
 你可以让我们直到你的想法。对于良好的[Angular2 Yii2项目结构](http://digitalreveries.in/2016/12/angular2-yii2-project-structure/)，您可以访问链接的页面。
+
+
+快速导航，其他文章链接：
+
++ [part1](https://easy-yii.github.io/2017/01/04/know-PartOne/)
++ [part2](https://easy-yii.github.io/2017/01/04/know-PartTwo/)
++ [part4](https://easy-yii.github.io/2017/01/05/know-PartFour/)
++ [part5](https://easy-yii.github.io/2017/01/09/know-PartFive/)
